@@ -20,6 +20,7 @@ describe("Sidebar", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
     vi.mocked(useSorokit).mockReturnValue({
       isConnected: true,
     } as ReturnType<typeof useSorokit>);
@@ -31,6 +32,20 @@ describe("Sidebar", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: /account/i }));
     expect(onNavigate).toHaveBeenCalledWith("account");
+  });
+
+  it("calls onNavigate before onClose when a nav item is selected", () => {
+    render(
+      <Sidebar active="wallet" onNavigate={onNavigate} open={false} onClose={onClose} />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /account/i }));
+
+    expect(onNavigate).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onNavigate.mock.invocationCallOrder[0]).toBeLessThan(
+      onClose.mock.invocationCallOrder[0],
+    );
   });
 
   it("calls onNavigate with each available section", () => {

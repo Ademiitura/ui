@@ -58,8 +58,10 @@ export function isItemActive(itemId: string, active: string): boolean {
 
 interface SidebarProps {
   active: NavSection | string;
+  /** Fired before closing the drawer so the destination screen can mount while the menu dismisses. */
   onNavigate: (s: NavSection) => void;
   open: boolean;
+  /** Called immediately after navigation when a section is selected. */
   onClose: () => void;
 }
 
