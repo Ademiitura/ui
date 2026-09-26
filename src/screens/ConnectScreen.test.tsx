@@ -27,6 +27,21 @@ describe("ConnectScreen", () => {
     expect(connectWallet).toHaveBeenCalledTimes(1);
   });
 
+  it("shows a loading state and disables the CTA while connecting", () => {
+    vi.mocked(useSorokit).mockReturnValue({
+      connectWallet: vi.fn(),
+      isConnecting: true,
+      error: null,
+      clearError: vi.fn(),
+    } as unknown as ReturnType<typeof useSorokit>);
+
+    render(<ConnectScreen />);
+
+    const btn = screen.getByRole("button", { name: /Connecting/i });
+    expect(btn).toBeDisabled();
+    expect(screen.getByText("Connecting to your wallet…")).toBeInTheDocument();
+  });
+
   it("announces connection errors to assistive technology", () => {
     vi.mocked(useSorokit).mockReturnValue({
       connectWallet: vi.fn(),
